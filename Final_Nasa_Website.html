@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Invisible Storm is a digital storytelling project about space weather. Discover how solar flares and storms from the Sun affect astronauts, farmers, pilots, power grids, and life on Earth.">
+    <title>The Invisible Storm - Space Weather</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            /* Modified background to include stars */
+            background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat, linear-gradient(to bottom, #0a0a0a, #1a1a2e); /* Dark space theme with stars */
+            background-size: 200px 200px, cover; /* Adjust star size and gradient cover */
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid #66fcf1;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .navbar li {
+            margin: 0 1rem;
+        }
+
+        .navbar a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s ease, transform 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .navbar a:hover {
+            color: #f4d03f;
+            transform: scale(1.05); /* Hover animation */
+            background: rgba(244, 208, 63, 0.1);
+        }
+    
+        /* Section Styling */
+        .section {
+            padding: 60px 0;
+            min-height: 50vh;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .section.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #header {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 100px 0;
+        }
+
+        #header h1 {
+            font-size: 3rem;
+            color: #f4d03f;
+            margin-bottom: 1rem;
+        }
+
+        #header h2 {
+            font-size: 1.5rem;
+            color: #66fcf1;
+            margin-bottom: 1rem;
+        }
+
+        #header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: #f4d03f;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #66fcf1;
+            margin: 1.5rem 0 1rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        em {
+            color: #66fcf1;
+            font-style: italic;
+        }
+
+        /* Interactive Diagram */
+        .interactive-diagram-container {
+            position: relative;
+            height: 900px;
+            overflow: hidden;
+            margin: 2rem auto;
+            max-width: 100%;
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            box-shadow:0 6px 30px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .interactive-diagram-container .diagram-canvas-wrap {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-diagram-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel {
+            padding: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0 0 10px 10px;
+            color: #e6eef8;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel h3 {
+            margin: 6px 0 12px;
+            font-size: 18px;
+            color: #f4d03f;
+            text-align: left;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel label {
+            display: block;
+            font-size: 13px;
+            margin: 10px 0 6px;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel input[type=range] {
+            width: 100%;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel .row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel button {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.04);
+            color: inherit;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .interactive-diagram-container .diagram-controls-panel .info {
+            margin-top: 12px;
+            background: rgba(255,255,255,0.02);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel .planet-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .interactive-diagram-container .diagram-controls-panel .planet-btn:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .interactive-diagram-container .diagram-footer {
+            position: absolute;
+            left: 10px;
+            bottom: 10px;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.35);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        /* Impacts List */
+        .impacts-list {
+            list-style: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .impacts-list li {
+            background: rgba(102, 252, 241, 0.1);
+            margin: 1rem 0;
+            padding: 1rem;
+            border-left: 4px solid #66fcf1;
+            border-radius: 5px;
+            font-size: 1.1rem;
+        }
+
+        .impacts-list strong {
+            color: #f4d03f;
+        }
+
+        /* Team List */
+        .team-list {
+            list-style: none;
+            max-width: 600px;
+            margin: 1rem auto;
+            padding-left: 0;
+        }
+
+        .team-list li {
+            background: rgba(244, 208, 63, 0.1);
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        #footer {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px 0;
+            border-top: 1px solid #66fcf1;
+        }
+
+        #footer p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Space Weather Dashboard Styles */
+        .dashboard-header {
+            background:#111; padding:15px; text-align:center; font-size:24px;
+            border-bottom:2px solid #222; margin-top: 2rem;
+        }
+        .dashboard-nav {
+            display:flex; justify-content:center; background:#1a1a1a; gap:10px; padding:10px;
+            flex-wrap: wrap;
+        }
+        .dashboard-nav button {
+            background:#222; border:none; color:white; padding:10px 20px; cursor:pointer;
+            border-radius:10px; transition:0.3s;
+        }
+        .dashboard-nav button:hover, .dashboard-nav button.active {
+            background:#444;
+        }
+        .dashboard-section {
+            display:none; padding:20px; text-align:center;
+        }
+        .dashboard-section.active { display:block; }
+
+        /* Dashboard grid */
+        .grid {
+            display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); /* Responsive grid */
+            gap:20px;
+            justify-content:center; margin-top:20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background:#1a1a1a; border-radius:15px; padding:20px;
+            text-align:center; cursor:pointer; transition:0.3s;
+            position:relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card:hover { background:#333; transform:scale(1.05); }
+        .popup {
+            display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%);
+            background:#222; padding:10px; border-radius:10px; font-size:12px; width:160px;
+            z-index: 10; 
+        }
+        .card:hover .popup { display:block; }
+        .icon { font-size:40px; margin-bottom:10px; }
+
+        /* Aurora */
+        .aurora-canvas {
+            background:#003; border-radius:50%;
+            max-width: 100%; 
+            height: auto; 
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* CME */
+        .cme-canvas {
+            background: #0a0a0a; 
+            border: 1px solid #333;
+            max-width: 100%; 
+            height: auto; 
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .interactive-diagram-container {
+                height: auto;
+                flex-direction: column;
+            }
+            .interactive-diagram-container .diagram-controls-panel {
+                border-radius: 0 0 10px 10px;
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+            .interactive-diagram-container .diagram-canvas-wrap {
+                min-height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .navbar li {
+                margin: 0.5rem 0;
+            }
+
+            #header h1 {
+                font-size: 2rem;
+            }
+
+            #header h2 {
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 40px 0;
+            }
+
+            p, .impacts-list li {
+                font-size: 1rem;
+            }
+
+            .interactive-diagram-container {
+                margin: 1rem auto;
+            }
+            .dashboard-nav {
+                flex-direction: column;
+            }
+            .dashboard-nav button {
+                margin-bottom: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            #header {
+                padding: 60px 0;
+            }
+
+            #header h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .impacts-list li {
+                padding: 0.8rem;
+                font-size: 0.95rem;
+            }
+            .grid {
+                grid-template-columns: 1fr; 
+            }
+        }
+
+        /* Solar Flare Simulation Container (for Three.js) */
+        #solar-flare-simulation-container-threejs {
+            width: 100%;
+            height: 600px; /* Define a height for the simulation */
+            background: black;
+            margin: 2rem auto;
+            border-radius: 10px;
+            overflow: hidden; /* Keep overflow hidden for this specific container */
+            position: relative; /* For canvas positioning */
+        }
+        #solar-flare-simulation-container-threejs canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Added style for the refresh button */
+        #solar-flare-simulation-container-threejs + button {
+            display: block;
+            margin: 1rem auto;
+            padding: 10px 20px;
+            background-color: #66fcf1;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        #solar-flare-simulation-container-threejs + button:hover {
+            background-color: #4ddad3;
+        }
+
+        /* Solar Flare Video Container (for iframe) */
+        #solar-flare-video-container {
+            width: 100%;
+            background: black;
+            margin: 2rem auto;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width * 100) */
+            height: 0;
+        }
+        #solar-flare-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        /* Style for the video link */
+        .video-link-container {
+            text-align: center; 
+            margin-top: 1rem;
+        }
+        .video-link-container a {
+            color: #66fcf1; 
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="#header">Home</a></li>
+            <li><a href="#story">Story</a></li>
+            <li><a href="#impacts">Impacts</a></li>
+            <li><a href="#why">Why It Matters</a></li>
+            <li><a href="#visuals-dashboard">Dashboard</a></li>
+            <li><a href="#solar-flare-simulation-threejs-section">3D Simulation</a></li>
+            <li><a href="#solar-flare-video-section">Video Simulation</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#footer">Footer</a></li>
+        </ul>
+    </nav>
+
+    <section id="header" class="section">
+        <div class="container">
+            <h1>Sunny's Journey</h1> <!-- Changed back to original title -->
+            <h2>A digital story about space weather and its impact on our lives</h2>
+            <p>The Sun gives us warmth and light, but sometimes it sends Earth something unexpected—storms of energy we call space weather.</p>
+        </div>
+    </section>
+
+    <section id="story" class="section">
+        <div class="container">
+            <h2>What Is Space Weather?</h2>
+            <p>Although the Sun is 93 million miles away, it’s closely connected to life on Earth. Most of the time, the Sun shines calmly. But sometimes, it explodes with power—releasing solar flares and coronal mass ejectio (CMEs).</p>
+            <p>These massive bursts of energy and particles travel through space. When they reach Earth, we call it space weather.</p>
+
+            <div class="interactive-diagram-container">
+                <div class="diagram-canvas-wrap">
+                    <canvas id="space"></canvas>
+                    <div class="diagram-footer">Click planets to toggle info • Drag to pan • Scroll to zoom</div>
+                </div>
+
+                <div class="diagram-controls-panel">
+                    <h3>Solar System Simulation</h3>
+                    <div class="row">
+                        <button id="playPause">Pause</button>
+                        <button id="centerSun">Center Sun</button>
+                        <button id="resetView">Reset View</button>
+                    </div>
+
+                    <label>Simulation speed</label>
+                    <input id="speed" type="range" min="0" max="3" step="0.01" value="1">
+
+                    <label>Zoom</label>
+                    <input id="zoom" type="range" min="0.2" max="3" step="0.01" value="1">
+
+                    <label><input id="trails" type="checkbox" checked> Show trails</label>
+                    <label><input id="labels" type="checkbox" checked> Show labels</label>
+                    <label><input id="starmove" type="checkbox" checked> Parallax stars</label>
+
+                    <div style="margin-top:12px">
+                        <strong>Jump to:</strong>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+                            <button class="planet-btn" data-target="0">☀️ Sun</button>
+                            <button class="planet-btn" data-target="1">☿ Mercury</button>
+                            <button class="planet-btn" data-target="2">♀ Venus</button>
+                            <button class="planet-btn" data-target="3">🌍 Earth</button>
+                            <button class="planet-btn" data-target="4">♂ Mars</button>
+                            <button class="planet-btn" data-target="5">♃ Jupiter</button>
+                            <button class="planet-btn" data-target="6">♄ Saturn</button>
+                            <button class="planet-btn" data-target="7">♅ Uranus</button>
+                            <button class="planet-btn" data-target="8">♆ Neptune</button>
+                        </div>
+                    </div>
+
+                    <div class="info" id="infoBox">Click a planet to see details here.</div>
+
+                    <p style="margin-top:12px;font-size:13px;opacity:0.9">This simplified solar system simulation helps visualize planetary orbits.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="impacts" class="section">
+        <div class="container">
+            <h2>How Does Space Weather Affect Us?</h2>
+            <ul class="impacts-list">
+                <li>🌾 <strong>Farmers</strong> – GPS signals that guide tractors and track crops can fail during solar storms.</li>
+                <li>✈️ <strong>Pilots</strong> – Airplanes flying near the poles sometimes lose radio contact when solar flares hit.</li>
+                <li>👩‍🚀 <strong>Astronauts</strong> – Solar radiation puts astronauts at risk, so missions need extra protection.</li>
+                <li>⚡ <strong>Power Grid Operators</strong> – Strong solar storms can overload power grids, leading to blackouts.</li>
+                <li>🌌 <strong>General Public</strong> – Solar storms also create auroras, the beautiful northern and southern lights.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="why" class="section">
+        <div class="container">
+            <h2>Why Should We Care?</h2>
+            <p>Space weather is invisible, but its effects are real. A single strong solar storm can disrupt satellites, communication, electricity, and daily life on Earth.</p>
+            <p>That’s why scientists around the world monitor the Sun every day. By studying solar activity, they can predict storms, protect astronauts, safeguard power grids, and prepare us for the next big event.</p>
+            <p>Understanding space weather means understanding how connected we are to the Sun—even from 93 million miles away.</p>
+        </div>
+    </section>
+
+    <section id="visuals-dashboard" class="section">
+        <div class="container">
+            <header class="dashboard-header">☀️ Space Weather Dashboard</header>
+            <nav class="dashboard-nav">
+                <button class="tab active" data-target="dashboard">Dashboard</button>
+                <button class="tab" data-target="timeline">Solar Flare Timeline</button>
+                <button class="tab" data-target="aurora">Aurora</button>
+            </nav>
+
+            <section id="dashboard" class="dashboard-section active">
+                <h2>Space Weather Impacts</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="icon">🛰️</div>
+                        Satellites
+                        <div class="popup">Solar storms can damage satellites & disrupt signals.</div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">📡</div>
+                        GPS
+                        <div class="popup">GPS accuracy decreases during solar events.</div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">📻</div>
+                        Radio
+                        <div class="popup">Solar flares cause radio blackouts at certain frequencies.</div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">👩‍🚀</div>
+                        Astronauts
+                        <div class="popup">Radiation hazards increase for astronauts in space.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="timeline" class="dashboard-section">
+                <h2>Solar Flare Timeline</h2>
+                <input type="range" id="flareSlider" min="0" max="4" value="0" style="width:80%; max-width: 600px;">
+                <div id="flareInfo" style="margin-top:20px;"></div>
+            </section>
+
+            <section id="aurora" class="dashboard-section">
+                <h2>Aurora Visualization</h2>
+                <canvas id="auroraCanvas" class="aurora-canvas" width="600" height="600"></canvas><br>
+                <label>Storm Intensity</label>
+                <input type="range" id="auroraSlider" min="1" max="10" value="5" style="width:80%; max-width: 600px;">
+            </section>
+        </div>
+    </section>
+
+    <section id="solar-flare-simulation-threejs-section" class="section">
+        <div class="container">
+            <h2>Solar Flare / CME 3D Simulation (Interactive)</h2>
+            <p>This interactive 3D simulation visualizes a solar flare and its potential impact on Earth's magnetosphere and aurora.</p>
+            <div id="solar-flare-simulation-container-threejs">
+                <!-- The Three.js renderer will append its canvas here -->
+            </div>
+            <button id="refreshSimulation">Refresh Simulation</button>
+        </div>
+    </section>
+
+    <section id="solar-flare-video-section" class="section">
+        <div class="container">
+            <h2>Video</h2>
+            <p>Watch the Video</p>
+            <div id="solar-flare-video-container">
+                <iframe
+                    src="https://drive.google.com/file/d/1-mLs45ws8do_Rf3vwRLoa4wmM01E3ZDw/view?usp=sharing"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+            </div>
+            <p class="video-link-container">
+                <a href="https://drive.google.com/file/d/1-mLs45ws8do_Rf3vwRLoa4wmM01E3ZDw/view?usp=sharing" target="_blank">Click here to watch the video on Google Drive</a>
+            </p>
+        </div>
+    </section>
+
+    <section id="team" class="section">
+        <div class="container">
+            <h2>About the Project</h2>
+            <p><em>The Invisible Storm was created for the NASA Space Apps Challenge. Our goal is to explain space weather in a way that’s clear, engaging, and inspiring for teens.</em></p>
+            <h3>Team Members:</h3>
+            <ul class="team-list">
+                <li>Ghadi Abi Rafeh - Web & Coding (Builds and manages the website) </li>
+                <li>Naya Seifelddine - Storytelling Lead & Team Leader (Leads animation and guides the team) </li>
+                <li>Rayan Srour - Resource & Research Helper (Finds images, videos, references, and helps a bit with research) </li>
+                <li>Jude Mahmoud -  Research & Editing (Does research and edits content)</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer id="footer" class="section">
+        <div class="container">
+            <p>© 2025 The Invisible Storm Team | Created for the NASA Space Apps Challenge</p>
+            <p>With the help of the built-in AI tools of VsCode and Cursor</p>
+        </div>
+    </footer>
+
+    <!-- Three.js Libraries -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Smooth Scrolling and Section Fade-in ---
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            const sections = document.querySelectorAll('.section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Solar System Simulation (2D Canvas) ---
+            const canvas = document.getElementById('space');
+            const ctx = canvas.getContext('2d', {alpha:true});
+            let W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+            function resize(){
+                const rect = canvas.getBoundingClientRect();
+                W = Math.floor(rect.width);
+                H = Math.floor(rect.height);
+                canvas.width = Math.floor(W * DPR);
+                canvas.height = Math.floor(H * DPR);
+                canvas.style.width = W + 'px';
+                canvas.style.height = H + 'px';
+                ctx.setTransform(DPR,0,0,DPR,0,0);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const cam = {x:0,y:0,zoom:1};
+            let isDragging=false, lastMouse=null;
+            canvas.addEventListener('mousedown', e=>{ isDragging=true; lastMouse = {x:e.clientX, y:e.clientY}; canvas.style.cursor='grabbing'; });
+            window.addEventListener('mouseup', ()=>{ isDragging=false; canvas.style.cursor='default'; lastMouse=null });
+            window.addEventListener('mousemove', e=>{
+                if(isDragging && lastMouse){ cam.x += (e.clientX - lastMouse.x) / cam.zoom; cam.y += (e.clientY - lastMouse.y) / cam.zoom; lastMouse = {x:e.clientX, y:e.clientY}; }
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = (e.clientX - rect.left - W/2)/cam.zoom - cam.x;
+                mouse.y = (e.clientY - rect.top - H/2)/cam.zoom - cam.y;
+            });
+
+            canvas.addEventListener('wheel', e=>{ e.preventDefault(); const delta = -e.deltaY * 0.001; cam.zoom *= (1+delta); cam.zoom = Math.max(0.15, Math.min(4, cam.zoom)); document.getElementById('zoom').value = cam.zoom; });
+
+            const playBtn = document.getElementById('playPause');
+            const speedSlider = document.getElementById('speed');
+            const zoomSlider = document.getElementById('zoom');
+            const trailsChk = document.getElementById('trails');
+            const labelsChk = document.getElementById('labels');
+            const starmoveChk = document.getElementById('starmove');
+            const centerSun = document.getElementById('centerSun');
+            const resetView = document.getElementById('resetView');
+            const infoBox = document.getElementById('infoBox');
+
+            let running = true;
+            playBtn.addEventListener('click', ()=>{ running = !running; playBtn.textContent = running? 'Pause' : 'Play'; });
+            zoomSlider.addEventListener('input', ()=>{ cam.zoom = Number(zoomSlider.value); });
+            speedSlider.addEventListener('input', ()=>{ /* handled in loop */ });
+            centerSun.addEventListener('click', ()=>{ cam.x = 0; cam.y = 0; });
+            resetView.addEventListener('click', ()=>{ cam.x = 0; cam.y = 0; cam.zoom = 1; zoomSlider.value = 1; });
+
+            document.querySelectorAll('.planet-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+                const n = Number(btn.dataset.target); focusOnPlanet(n);
+            }));
+
+            const mouse = {x:0,y:0,down:false};
+            canvas.addEventListener('click', e=>{ handleClick(mouse.x, mouse.y); });
+
+            const stars = Array.from({length:250}, ()=>({x:(Math.random()-0.5)*4000,y:(Math.random()-0.5)*4000,z:Math.random()}));
+
+            const bodies = [
+                {name:'Sun', r:30, color:'#ffcc66', mass:1000, info:'The star at the center of our solar system.'},
+                {name:'Mercury', r:4, a:60, period:0.24, color:'#bdbdbd', info:'Small rocky planet, closest to the Sun.'},
+                {name:'Venus', r:6, a:90, period:0.62, color:'#f3c09b', info:'Thick atmosphere and surface hot enough to melt lead.'},
+                {name:'Earth', r:7, a:130, period:1, color:'#4ea8ff', info:'Our home — liquid water and life.'},
+                {name:'Mars', r:5, a:170, period:1.88, color:'#ff6b6b', info:'The red planet; dusty and cold.'},
+                {name:'Jupiter', r:14, a:230, period:11.86, color:'#f7d07a', info:'Gas giant with many moons.'},
+                {name:'Saturn', r:12, a:300, period:29.46, color:'#ecd28a', info:'Gas giant known for its rings.'},
+                {name:'Uranus', r:9, a:360, period:84, color:'#9be7ff', info:'Ice giant with a tilted axis.'},
+                {name:'Neptune', r:9, a:410, period:165, color:'#6aa5ff', info:'The far blue ice giant.'}
+            ];
+
+            let time = 0;
+            const trailMap = bodies.map(()=>[]);
+            const maxTrail = 220;
+
+            function worldToScreen(x,y){
+                return {x: (W/2) + (x+cam.x) * cam.zoom, y: (H/2) + (y+cam.y) * cam.zoom};
+            }
+
+            function drawStarfield(){
+                ctx.save();
+                ctx.translate(W/2, H/2);
+                for(const s of stars){
+                    const par = starmoveChk.checked? (1 - s.z) * 0.5 : 0;
+                    const sx = (s.x + cam.x * par) * cam.zoom;
+                    const sy = (s.y + cam.y * par) * cam.zoom;
+                    const radius = Math.max(0.3, s.z * 1.6);
+                    if(sx < -W || sx > W || sy < -H || sy > H) continue;
+                    ctx.globalAlpha = 0.9 * s.z;
+                    ctx.fillStyle = 'white';
+                    ctx.beginPath(); ctx.arc(sx, sy, radius, 0, Math.PI*2); ctx.fill();
+                }
+                ctx.restore();
+                ctx.globalAlpha = 1;
+            }
+
+            function drawOrbits(){
+                ctx.save(); ctx.translate(W/2, H/2); ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+                for(let i=1;i<bodies.length;i++){
+                    const a = bodies[i].a; ctx.beginPath(); ctx.ellipse(0,0,a*cam.zoom, a*cam.zoom, 0, 0, Math.PI*2); ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            function drawBodies(){
+                ctx.save(); ctx.translate(W/2, H/2);
+                for(let i=0;i<bodies.length;i++){
+                    const b = bodies[i];
+                    let x=0,y=0;
+                    if(i>0){
+                        const ang = time * (1 / b.period) * Math.PI * 2;
+                        x = Math.cos(ang) * b.a;
+                        y = Math.sin(ang) * b.a * (0.98 + (i%2?0.02:-0.02));
+                        trailMap[i].push({x,y}); if(trailMap[i].length>maxTrail) trailMap[i].shift();
+                    }
+                    const sx = (x+cam.x) * cam.zoom;
+                    const sy = (y+cam.y) * cam.zoom;
+
+                    if(trailsChk.checked && i>0){
+                        ctx.beginPath();
+                        const points = trailMap[i];
+                        for(let t=0;t<points.length;t++){
+                            const p = points[t]; const px = p.x*cam.zoom; const py = p.y*cam.zoom;
+                            if(t===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                        }
+                        ctx.strokeStyle = b.color+'44'; ctx.lineWidth = Math.max(1, b.r * 0.25 * cam.zoom); ctx.stroke();
+                    }
+
+                    ctx.beginPath(); ctx.fillStyle = b.color; ctx.arc(sx, sy, Math.max(1, b.r*cam.zoom), 0, Math.PI*2); ctx.fill();
+
+                    if(labelsChk.checked){ ctx.font = Math.max(10, 12 * cam.zoom) + 'px system-ui'; ctx.fillStyle='rgba(230,238,248,0.9)'; ctx.textAlign='center'; ctx.fillText(b.name, sx, sy - (b.r*cam.zoom + 8)); }
+                }
+                ctx.restore();
+            }
+
+            function clearBackground(){
+                if(trailsChk.checked){
+                    ctx.fillStyle = 'rgba(5,8,20,0.18)'; ctx.fillRect(0,0,W,H);
+                } else {
+                    ctx.clearRect(0,0,W,H);
+                    ctx.fillStyle = '#030512'; ctx.fillRect(0,0,W,H);
+                }
+            }
+
+            function handleClick(wx, wy){
+                for(let i=0;i<bodies.length;i++){
+                    const b = bodies[i];
+                    let x=0,y=0; if(i>0){ const ang = time * (1 / b.period) * Math.PI * 2; x = Math.cos(ang)*b.a; y = Math.sin(ang)*b.a; }
+                    const dx = wx - x; const dy = wy - y; const dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < Math.max(6, b.r)) { showInfo(i); return; }
+                }
+                infoBox.textContent = 'Space... peaceful and mostly empty.';
+            }
+
+            function showInfo(i){
+                const b = bodies[i];
+                infoBox.innerHTML = `<strong>${b.name}</strong><div style="margin-top:6px">${b.info || 'No data available.'}</div><div style="margin-top:8px;font-size:13px;opacity:0.9">Radius: ${b.r} (scaled) ${i>0?`• Orbit: ${b.a} units • Period: ${b.period} yr` : ''}</div>`;
+                // focus camera gently on that body
+                if(i>0) focusOnPlanet(i);
+            }
+
+            function focusOnPlanet(i){
+                const b = bodies[i]; let x=0,y=0; if(i>0){ const ang = time * (1 / b.period) * Math.PI * 2; x = Math.cos(ang) * b.a; y = Math.sin(ang) * b.a; }
+                // animate camera center
+                const start = {x:cam.x, y:cam.y}; const end = {x:-x, y:-y}; const dur = 450; const t0 = performance.now();
+                function animate(t){ const p = Math.min(1, (t - t0)/dur); const ease = p*(2-p); cam.x = start.x + (end.x - start.x)*ease; cam.y = start.y + (end.y - start.y)*ease; if(p<1) requestAnimationFrame(animate); }
+                requestAnimationFrame(animate);
+            }
+
+            // Main loop for 2D Solar System
+            let last = performance.now();
+            function loop(now){
+                const dt = Math.min(50, now - last); last = now;
+                if(running) time += (dt/1000) * (Number(speedSlider.value) || 1) * 0.03; // speed scaled
+
+                clearBackground();
+                drawStarfield();
+                drawOrbits();
+                drawBodies();
+
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+
+            // initialize 2D Solar System
+            function initInteractiveDiagram(){
+                resize();
+                infoBox.textContent = 'Click a planet to see details here.';
+                cam.zoom = Number(document.getElementById('zoom').value) || 1;
+            }
+            initInteractiveDiagram();
+
+
+            // --- Space Weather Dashboard Scripts (2D Visuals) ---
+            // Tab Switching
+            const dashboardTabs = document.querySelectorAll(".dashboard-nav .tab");
+            const dashboardSections = document.querySelectorAll(".dashboard-section");
+            dashboardTabs.forEach(tab=>{
+              tab.addEventListener("click",()=>{
+                dashboardTabs.forEach(t=>t.classList.remove("active"));
+                dashboardSections.forEach(s=>s.classList.remove("active"));
+                tab.classList.add("active");
+                document.getElementById(tab.dataset.target).classList.add("active");
+                // Re-initialize canvases when their tab becomes active to ensure they draw correctly
+                if (tab.dataset.target === 'aurora') {
+                    drawAurora(auroraSlider.value);
+                }
+              });
+            });
+
+            const flares=[
+              {date:"2025-01-15", class:"M2.3", effect:"Radio blackouts"},
+              {date:"2025-02-10", class:"X1.0", effect:"Strong GPS disruption"},
+              {date:"2025-03-05", class:"C8.1", effect:"Minor satellite risk"},
+              {date:"2025-04-21", class:"X5.4", effect:"Major power grid impact"},
+              {date:"2025-06-12", class:"M4.2", effect:"High-latitude radio issues"},
+            ];
+            const flareSlider=document.getElementById("flareSlider");
+            const flareInfo=document.getElementById("flareInfo");
+            function updateFlare(i){
+              const f=flares[i];
+              flareInfo.innerHTML=`<b>${f.date}</b><br>Class: ${f.class}<br>Effect: ${f.effect}`;
+            }
+            if (flareSlider) {
+                flareSlider.addEventListener("input",()=>updateFlare(flareSlider.value));
+                updateFlare(0);
+            }
+
+            // Aurora
+            const auroraCanvas=document.getElementById("auroraCanvas");
+            const actx=auroraCanvas ? auroraCanvas.getContext("2d") : null;
+            const auroraSlider=document.getElementById("auroraSlider");
+            function drawAurora(intensity){
+                if (!actx || !auroraCanvas) return;
+                actx.clearRect(0,0,auroraCanvas.width,auroraCanvas.height);
+                let gradient=actx.createRadialGradient(auroraCanvas.width/2, auroraCanvas.height/2, 50, auroraCanvas.width/2, auroraCanvas.height/2, auroraCanvas.width/2);
+                gradient.addColorStop(0,"rgba(0,255,100,"+intensity/10+")");
+                gradient.addColorStop(1,"rgba(0,0,0,0)");
+                actx.fillStyle=gradient;
+                actx.fillRect(0,0,auroraCanvas.width,auroraCanvas.height);
+            }
+            if (auroraSlider) {
+                auroraSlider.addEventListener("input",()=>drawAurora(auroraSlider.value));
+                drawAurora(5);
+            }
+
+            // --- Three.js Solar Flare / CME 3D Simulation ---
+            const simulationContainerThreeJS = document.getElementById('solar-flare-simulation-container-threejs');
+            const refreshButton = document.getElementById('refreshSimulation');
+
+            if (!simulationContainerThreeJS) {
+                console.error("Solar Flare Simulation (Three.js) container not found.");
+                // return; // Don't return, as the video simulation might still be present
+            }
+
+            let scene, camera, renderer, controls, sun, earthGroup, earth, atmosphere, magnetosphere, fieldLinesGroup, particles, aurora;
+            let simTime, impactIntensity, launchIndex, posAttr, velocities, earthPos;
+            let animationFrameId; // To store the animation frame ID for cancellation
+
+            function initSolarFlareSimulation() {
+                // Clear previous simulation if it exists
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                if (renderer) {
+                    // Remove existing canvas from the DOM
+                    const existingCanvas = simulationContainerThreeJS.querySelector('canvas');
+                    if (existingCanvas) {
+                        simulationContainerThreeJS.removeChild(existingCanvas);
+                    }
+                    renderer.dispose(); // Dispose of the WebGL context
+                }
+                if (scene) {
+                    // Dispose of all geometries and materials to free up memory
+                    scene.traverse(object => {
+                        if (object.geometry) object.geometry.dispose();
+                        if (object.material) {
+                            if (Array.isArray(object.material)) {
+                                object.material.forEach(material => material.dispose());
+                            } else {
+                                object.material.dispose();
+                            }
+                        }
+                    });
+                    // Clear the scene
+                    while(scene.children.length > 0){ 
+                        scene.remove(scene.children[0]); 
+                    }
+                }
+
+                // Scene setup
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, simulationContainerThreeJS.clientWidth / simulationContainerThreeJS.clientHeight, 0.1, 2000);
+                renderer = new THREE.WebGLRenderer({ antialias: false });
+                renderer.setSize(simulationContainerThreeJS.clientWidth, simulationContainerThreeJS.clientHeight);
+                simulationContainerThreeJS.appendChild(renderer.domElement);
+
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+                controls.minDistance = 10;
+                controls.maxDistance = 500;
+
+                // Starfield - simplified
+                const starCount = 2000;
+                const starVertices = [];
+                for (let i = 0; i < starCount; i++) {
+                    starVertices.push(
+                        (Math.random() - 0.5) * 2000,
+                        (Math.random() - 0.5) * 2000,
+                        (Math.random() - 0.5) * 2000
+                    );
+                }
+                const starsGeometry = new THREE.BufferGeometry();
+                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+                const starsMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF, size: 2, sizeAttenuation: false });
+                const stars = new THREE.Points(starsGeometry, starsMaterial);
+                scene.add(stars);
+
+                // Sun - basic and bright
+                const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
+                const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFAA });
+                sun = new THREE.Mesh(sunGeometry, sunMaterial);
+                scene.add(sun);
+
+                // Sun light
+                const sunLight = new THREE.PointLight(0xFFFFAA, 2, 200);
+                sunLight.position.set(0, 0, 0);
+                scene.add(sunLight);
+
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+                scene.add(ambientLight);
+
+                // Earth group
+                earthGroup = new THREE.Group();
+                earthGroup.position.set(100, 0, 0);
+                scene.add(earthGroup);
+
+                // Earth - simple blue-green
+                const earthGeometry = new THREE.SphereGeometry(1, 32, 32);
+                const earthMaterial = new THREE.MeshPhongMaterial({ color: 0x4A90E2 });
+                earth = new THREE.Mesh(earthGeometry, earthMaterial);
+                earthGroup.add(earth);
+
+                // Atmosphere - simple glow
+                const atmosphereGeometry = new THREE.SphereGeometry(0.55, 16, 16);
+                const atmosphereMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x87CEEB,
+                    transparent: true,
+                    opacity: 0.2,
+                    side: THREE.BackSide
+                });
+                atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+                earthGroup.add(atmosphere);
+
+                // Magnetosphere - simple blue glow sphere
+                const magnetosphereGeometry = new THREE.SphereGeometry(4, 8, 8);
+                const magnetosphereMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00AAFF,
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.BackSide
+                });
+                magnetosphere = new THREE.Mesh(magnetosphereGeometry, magnetosphereMaterial);
+                earthGroup.add(magnetosphere);
+
+                // Simple magnetic field lines - basic lines
+                fieldLinesGroup = new THREE.Group();
+                const numFieldLines = 4;
+                for (let i = 0; i < numFieldLines; i++) {
+                    const angle = (i / numFieldLines) * Math.PI * 2;
+                    const points = [
+                        new THREE.Vector3(0, -4, 0),
+                        new THREE.Vector3(Math.sin(angle) * 3, 0, Math.cos(angle) * 3),
+                        new THREE.Vector3(0, 4, 0)
+                    ];
+                    const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00AAFF, transparent: true, opacity: 0.5 });
+                    const line = new THREE.Line(lineGeometry, lineMaterial);
+                    fieldLinesGroup.add(line);
+                }
+                earthGroup.add(fieldLinesGroup);
+
+                // Particles for CME - minimal
+                const particleCount = 500;
+                const positions = new Float32Array(particleCount * 3);
+                velocities = new Float32Array(particleCount * 3); // Make velocities accessible globally
+                const colors = new Float32Array(particleCount * 3);
+                launchIndex = 0; // Reset launch index
+
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3] = 0;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 2;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+                    velocities[i * 3] = 0.5;
+                    velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.2;
+                    velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.2;
+                    colors[i * 3] = 1;
+                    colors[i * 3 + 1] = 0.5;
+                    colors[i * 3 + 2] = 0;
+                }
+
+                const particlesGeometry = new THREE.BufferGeometry();
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const particleMaterial = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8,
+                    sizeAttenuation: true
+                });
+
+                particles = new THREE.Points(particlesGeometry, particleMaterial);
+                scene.add(particles);
+                posAttr = particlesGeometry.attributes.position; // Make posAttr accessible globally
+
+                // Aurora - minimal
+                const auroraGeometry = new THREE.SphereGeometry(0.6, 8, 8);
+                const auroraMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00FF00,
+                    transparent: true,
+                    opacity: 0,
+                    side: THREE.DoubleSide
+                });
+                aurora = new THREE.Mesh(auroraGeometry, auroraMaterial);
+                earthGroup.add(aurora);
+
+                // Animation variables reset
+                simTime = 0;
+                impactIntensity = 0;
+                earthPos = new THREE.Vector3(100, 0, 0); // Reset earth position
+
+                // Camera position - ensure it sees everything
+                camera.position.set(50, 20, 50);
+                controls.target.set(50, 0, 0);
+                controls.update();
+
+                // Start animation loop
+                animateSolarFlareSimulation();
+            }
+
+            function animateSolarFlareSimulation() {
+                animationFrameId = requestAnimationFrame(animateSolarFlareSimulation);
+                simTime += 0.01;
+
+                // Rotate sun and earth
+                sun.rotation.y += 0.01;
+                earth.rotation.y += 0.01;
+
+                // Launch particles
+                if (launchIndex < particles.geometry.attributes.position.count) {
+                    for (let j = 0; j < 10 && launchIndex < particles.geometry.attributes.position.count; j++) {
+                        const i = launchIndex;
+                        posAttr.array[i * 3] = 5;
+                        posAttr.array[i * 3 + 1] = (Math.random() - 0.5) * 2;
+                        posAttr.array[i * 3 + 2] = (Math.random() - 0.5) * 2;
+                        launchIndex++;
+                    }
+                }
+
+                // Update particles
+                let hitCount = 0;
+                for (let i = 0; i < particles.geometry.attributes.position.count; i++) {
+                    if (posAttr.array[i * 3] > 4) {
+                        posAttr.array[i * 3] += velocities[i * 3];
+                        posAttr.array[i * 3 + 1] += velocities[i * 3 + 1];
+                        posAttr.array[i * 3 + 2] += velocities[i * 3 + 2];
+
+                        const particlePos = new THREE.Vector3(posAttr.array[i * 3], posAttr.array[i * 3 + 1], posAttr.array[i * 3 + 2]);
+                        const distToEarth = particlePos.distanceTo(earthPos);
+
+                        if (distToEarth > 150) {
+                            posAttr.array[i * 3] = 0;
+                            posAttr.array[i * 3 + 1] = 0;
+                            posAttr.array[i * 3 + 2] = 0;
+                        } else if (distToEarth < 5) {
+                            hitCount++;
+                            // Deflect
+                            velocities[i * 3] *= -0.5;
+                            velocities[i * 3 + 1] += (Math.random() - 0.5) * 0.1;
+                            velocities[i * 3 + 2] += (Math.random() - 0.5) * 0.1;
+                            if (distToEarth < 1) {
+                                posAttr.array[i * 3] = 100;
+                                posAttr.array[i * 3 + 1] = 0;
+                                posAttr.array[i * 3 + 2] = 0;
+                            }
+                        }
+                    }
+                }
+                posAttr.needsUpdate = true;
+
+                // Update impacts
+                if (hitCount > 0) {
+                    impactIntensity += 0.1;
+                }
+                impactIntensity *= 0.95;
+                impactIntensity = Math.min(impactIntensity, 1);
+
+                // Pulse atmosphere and magnetosphere
+                atmosphere.material.opacity = 0.2 + impactIntensity * 0.3;
+                magnetosphere.material.opacity = 0.1 + impactIntensity * 0.2;
+
+                // Pulse field lines
+                fieldLinesGroup.children.forEach(line => {
+                    line.material.opacity = 0.5 + impactIntensity * 0.3;
+                });
+
+                // Aurora
+                aurora.material.opacity = impactIntensity * 0.5;
+                aurora.rotation.y += 0.02;
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            // Resize handler for the Three.js simulation
+            window.addEventListener('resize', () => {
+                if (simulationContainerThreeJS && simulationContainerThreeJS.offsetParent !== null && camera && renderer) { // Check if element is visible and objects exist
+                    camera.aspect = simulationContainerThreeJS.clientWidth / simulationContainerThreeJS.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(simulationContainerThreeJS.clientWidth, simulationContainerThreeJS.clientHeight);
+                }
+            });
+
+            // Event listener for the refresh button
+            if (refreshButton) {
+                refreshButton.addEventListener('click', initSolarFlareSimulation);
+            }
+
+            // Initial setup of the Three.js simulation
+            if (simulationContainerThreeJS) {
+                initSolarFlareSimulation();
+            }
+        });
+    </script>
+</body>
+</html>
